@@ -12,3 +12,16 @@ for (let i = 0; i < ringBtn.length; i++) {
         image.src = './images/' + color + '.png';
     })
 }
+// select size box 
+function selectSizeBox(size){
+    const sizes = ['M', 'S', 'L', 'XL'];
+    for (const siz of sizes) {
+        const boxBtn = document.getElementById('size-' + siz)
+        if (size === siz) {
+            boxBtn.classList.add('border-purple-600')
+        }else{
+            boxBtn.classList.remove('border-purple-600')
+
+        }
+    }
+}
