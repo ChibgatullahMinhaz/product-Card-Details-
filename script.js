@@ -1,14 +1,18 @@
-const ringBtn = document.querySelectorAll('.ring-button');
-
+let imageBase = './images/';
+let ringBtn = document.querySelectorAll('.ring-button');
 for (let i = 0; i < ringBtn.length; i++) {
     ringBtn[i].addEventListener('click', (event) => {
         for (const btn of ringBtn) {
             btn.classList.remove('border-purple-700');
+            btn.classList.remove('selectedColor');
+
         }
         event.target.classList.add('border-purple-700');
+        event.target.classList.add('selectedColor');
+
         const color = event.target.id.replace('-color', '');
-        return image = document.getElementById('product-image').src = './images/' + color + '.png';
-        
+        document.getElementById('product-image').src = imageBase + color + '.png';
+
     })
 }
 // select size box 
@@ -17,10 +21,11 @@ function selectSizeBox(size) {
     for (const siz of sizes) {
         const boxBtn = document.getElementById('size-' + siz)
         if (size === siz) {
-            boxBtn.classList.add('border-purple-600')
+            boxBtn.classList.add('border-purple-600');
+            boxBtn.classList.add('sizeBox');
         } else {
             boxBtn.classList.remove('border-purple-600')
-
+            boxBtn.classList.remove('sizeBox');
         }
     }
 }
@@ -33,14 +38,68 @@ document.querySelectorAll('.quantity-button').forEach(btn => {
     })
 });
 
-// add to cart
+let cartModal = [];
 let chekoutCount = 0;
+let totalPrice = 0
 document.getElementById('add-to-cart').addEventListener('click', () => {
+    const isColorSelected = document.querySelector('.border-purple-700')
+    const isSelectedSizeBox = document.querySelector('.sizeBox');
+    const productColor = isColorSelected.id.replace('-', ' ');
+    const imgName = isColorSelected.id.split('-')[0];
+    const productSize = isSelectedSizeBox.innerText.split(' ')[0];
+    const productPrice = parseFloat(isSelectedSizeBox.innerText.split(' ')[1].split("$")[1])
     const Quentity = parseFloat(document.getElementById('quantity').innerText);
-    if (Quentity === 0) {
-       return alert("please selec a Quentity...")
+    const Price = Quentity * productPrice;
+    totalPrice += Price;
+
+    if (isColorSelected && isSelectedSizeBox) {
+        chekoutCount = chekoutCount + Quentity;
+        document.getElementById('cart-count').innerText = chekoutCount;
+    } else {
+        return alert('Pleas Select product color and Size')
     }
-    chekoutCount  = chekoutCount + Quentity;
+    if (Quentity === 0) {
+        return alert("please selec a Quentity...");
+    }
     document.getElementById('checkout-container').classList.remove('hidden');
-    document.getElementById('cart-count').innerText= chekoutCount;
+    document.getElementById('TotalPrice').innerText = `$${totalPrice}`;
+
+    cartModal.push(
+        {
+            image: imageBase + imgName + '.png',
+            color: productColor,
+            Price: productPrice,
+            Quentity: Quentity,
+            size: productSize,
+        }
+    )
+})
+document.getElementById('checkout-container').addEventListener('click', () => {
+    const Modal = document.getElementById('cart-modal');
+   cartModal.forEach(cart => {
+    const modalContainer = document.getElementById('cart-items');
+    const row = document.createElement('tr');
+    row.classList.add("mt-4")
+    row.innerHTML = `
+                <td>
+                 <div class="flex items-center justify-between gap-x-2">
+                  <img class="h=12 w-12 object-cover" src=${cart.image} alt="">
+                  <span>Classy Modern Smart Watch</span>
+                 </div>
+                </td>
+                <td>${cart.color}</td>
+                <td>${cart.size}</td>
+                <td>${cart.Quentity}</td>
+                <td>${cart.Price}</td>
+    `
+    modalContainer.appendChild(row)
+   });
+    Modal.classList.remove('hidden');
+});
+
+document.getElementById('continue-shopping').addEventListener('click', ()=>{
+    document.getElementById('cart-modal').classList.add('hidden');
+})
+document.getElementById('checkout').addEventListener('click', ()=>{
+   return alert('Payment in Proggress')
 })
