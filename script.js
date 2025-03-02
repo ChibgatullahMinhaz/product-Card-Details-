@@ -25,3 +25,12 @@ function selectSizeBox(size){
         }
     }
 }
+// handle quantity
+
+document.querySelectorAll('.quantity-button').forEach(btn => {
+    btn.addEventListener('click', (e)=>{
+        const Quentity =parseFloat(document.getElementById('quantity').innerText);
+        const amount =  e.target.innerText === "+" ? 1 : -1;
+        document.getElementById('quantity').innerText = Math.max(0, Quentity + amount)
+    })
+});
